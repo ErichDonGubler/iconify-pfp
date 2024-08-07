@@ -2,7 +2,7 @@ use std::fs::create_dir_all;
 
 use camino::Utf8PathBuf;
 use clap::Parser as _;
-use image::{imageops::FilterType, DynamicImage, GenericImageView};
+use image::{imageops::FilterType, ColorType, DynamicImage, GenericImageView};
 
 #[derive(Debug, clap::Parser)]
 struct Cli {
@@ -33,6 +33,20 @@ fn main() {
                 FilterType::Lanczos3,
             );
         }
+        let grayscale_pfp = pfp.grayscale();
+        pfp = match pfp.color() {
+            ColorType::L8 => grayscale_pfp.into_luma8().into(),
+            ColorType::La8 => grayscale_pfp.into_luma_alpha8().into(),
+            ColorType::Rgb8 => grayscale_pfp.into_rgb8().into(),
+            ColorType::Rgba8 => grayscale_pfp.into_rgba8().into(),
+            ColorType::L16 => grayscale_pfp.into_luma16().into(),
+            ColorType::La16 => grayscale_pfp.into_luma_alpha16().into(),
+            ColorType::Rgb16 => grayscale_pfp.into_rgb16().into(),
+            ColorType::Rgba16 => grayscale_pfp.into_rgba16().into(),
+            ColorType::Rgb32F => grayscale_pfp.into_rgb32f().into(),
+            ColorType::Rgba32F => grayscale_pfp.into_rgba32f().into(),
+            _ => unimplemented!("looks like it's time to add a new format!"),
+        };
         pfp
     };
 
