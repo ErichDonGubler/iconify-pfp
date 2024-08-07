@@ -2,7 +2,7 @@ use std::fs::create_dir_all;
 
 use camino::Utf8PathBuf;
 use clap::Parser as _;
-use image::{DynamicImage, GenericImageView};
+use image::{imageops::FilterType, DynamicImage, GenericImageView};
 
 #[derive(Debug, clap::Parser)]
 struct Cli {
@@ -24,7 +24,17 @@ fn main() {
     let out_dir = out_dir.unwrap_or_else(|| profile_picture_path.with_extension(""));
     create_dir_all(&out_dir).unwrap();
 
-    let profile_picture = image::open(&profile_picture_path).unwrap();
+    let profile_picture = {
+        let mut pfp = image::open(&profile_picture_path).unwrap();
+        if pfp.width() > 500 || pfp.height() > 500 {
+            pfp = pfp.resize(
+                500.min(pfp.height()),
+                500.min(pfp.height()),
+                FilterType::Lanczos3,
+            );
+        }
+        pfp
+    };
 
     for icon_path in icon_paths {
         let icon = image::open(&icon_path).unwrap();
@@ -46,7 +56,7 @@ fn main() {
 }
 
 fn overlay_icon_over_pfp(profile_picture: &mut DynamicImage, icon: &DynamicImage) {
-    use image::imageops::{overlay, overlay_bounds, FilterType};
+    use image::imageops::{overlay, overlay_bounds};
 
     // Divide the profile picture into an evenly spaced 3x3 grid. We want the icon to occupy the
     // bottom-right nonant of the profile picture.
