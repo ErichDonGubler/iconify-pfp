@@ -1,0 +1,11 @@
+[package]
+name = "iconify-pfp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+camino = "1.1.7"
+clap = { version = "4.5.13", features = ["derive"] }
+env_logger = "0.11.5"
+image = "0.25.2"
+log = "0.4.22"
