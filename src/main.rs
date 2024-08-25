@@ -58,11 +58,8 @@ fn main() {
             pfp
         };
 
-        let iconified_pfp_file_path = out_dir.join(format!(
-            "{}_{}.png",
-            profile_picture_path.file_stem().unwrap(),
-            icon_path.file_stem().unwrap(),
-        ));
+        let iconified_pfp_file_path =
+            out_dir.join(format!("{}.png", icon_path.file_stem().unwrap()));
         iconified_profile_picture
             .save(iconified_pfp_file_path)
             .unwrap();
